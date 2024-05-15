@@ -25,6 +25,15 @@ function generateGrid(size) {
         // Donne une ligne et une colonne à la div
         div.ariaRowIndex = Math.floor(i / size);
         div.ariaColIndex = i % size;
+        // Pour chaque case de la grille, permet de donner la classe path à la case si elle est cliquée droit
+        div.addEventListener("contextmenu", (e) => {
+        e.preventDefault();
+        if (div.classList.contains("start") || div.classList.contains("end") || div.classList.contains("wall")) {
+            return;
+        }
+        div.classList.toggle("path");
+        });
+
         // récupére les potentielles cases de départ et d'arrivée
         if (div.ariaColIndex == 0) {
             starts.push(div);
@@ -62,5 +71,7 @@ function generateGrid(size) {
     // Donne une couleur aux cases de départ et d'arrivée
     start.classList.add("start");
     end.classList.add("end");
+
+    
 }
 
