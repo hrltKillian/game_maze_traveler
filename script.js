@@ -1,17 +1,47 @@
 let grid = document.querySelector("#grid");
 let selectorSize = document.getElementById("selectorSize");
 let generateButton = document.getElementById("generate");
+let listPrediction = document.getElementById("listPrediction");
+let start = document.getElementById("start");
 let arrowLeft = document.getElementById("q");
 let arrowRight = document.getElementById("z");
 let arrowUp = document.getElementById("d");
 arrows = [arrowLeft, arrowRight, arrowUp];
 for (let arrow of arrows) {
     arrow.addEventListener("mousedown", () => {
+        addArrowInPrediction(arrow);
         arrow.classList.add("active");
     });
     arrow.addEventListener("mouseup", () => {
         arrow.classList.remove("active");
     });
+}
+
+function undoPrediction() {
+    let lastArrow = listPrediction.lastChild;
+    if (lastArrow) {
+        lastArrow.remove();
+    }
+}
+
+function clearPrediction() {
+    listPrediction.innerHTML = "";
+}
+
+
+
+function addArrowInPrediction(arrow) {
+    // Ajoute l'ID de la flèche à la liste des prédictions
+    if (arrow.id == "q") {
+        listPrediction.innerHTML += `<img src="Arrow_Left.png" alt="${arrow.id}" class="arrowLeft textPrediction" />`;
+    }
+    if (arrow.id == "z") {
+        listPrediction.innerHTML += `<img src="Arrow_Icon.png" alt="${arrow.id}" class="arrowUp textPrediction" />`;
+    }
+    if (arrow.id == "d") {
+        listPrediction.innerHTML += `<img src="Arrow_Right.png" alt="${arrow.id}" class="arrowRight textPrediction" />`;
+    }
+    
 }
 
 generateButton.addEventListener("click", () => {
@@ -89,14 +119,15 @@ function generateGrid(size) {
     robot.ariaColIndex = start.ariaColIndex;
     robot.textContent = "🤖";
     start.appendChild(robot);
-    openNav();
+    openPrediction();
 }
 
-function openNav() {
-    document.getElementById("mySidenav").style.width = "400px";
+function openPrediction() {
+    document.getElementById("listPrediction").style.width = "400px";
+    document.getElementById("listPrediction").style.padding = "30px";
   }
   
-  function closeNav() {
-    document.getElementById("mySidenav").style.width = "0";
+  function closePrediction() {
+    document.getElementById("listPrediction").style.width = "0";
   }
 

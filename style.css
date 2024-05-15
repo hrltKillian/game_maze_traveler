@@ -18,7 +18,13 @@ img {
     height: auto;
 }
 
-.sideHystory {
+.textPrediction {
+    border: solid black 1px;
+    margin: 10px;
+    padding: 10px;
+}
+
+.sidePrediction {
     height: 100%;
     width: 0;
     position: fixed;
@@ -28,7 +34,6 @@ img {
     background-color: lightgrey;
     overflow-x: hidden;
     transition: 0.5s;
-    padding-top: 60px;
 }
 
 .gridNKeys {
@@ -147,11 +152,11 @@ img {
     width: 500px;
 }
 
-#arrowLeft, #arrowUp {
+#arrowLeft, #arrowUp, .arrowLeft, .arrowUp {
     rotate: -90deg;
 }
 
-#arrowRight {
+#arrowRight, .arrowRight {
     rotate: 90deg;
 }
 

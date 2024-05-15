@@ -8,18 +8,19 @@
 		<title>algo de recherche</title>
 	</head>
 	<body>
-        <div id="mySidenav" class="sideHystory">
+        <div id="listPrediction" class="sidePrediction">
           </div>
           
 		<div class="selector">
 			<input id="selectorSize" type="number" min="3" max="40" />
 			<button id="generate">Générer</button>
+            <button id="start">Start</button>
 		</div>
         <div class="gridNArrow">
             <div class="gridNKeys">
                 <div id="grid"></div>
                 <div class="keys">
-                    <div id="undo">Undo</div>
+                    <div id="undo" onclick="undoPrediction()">Undo</div>
                     <div id="q" class="key">
                         <img id="arrowLeft" src="Arrow_Left.png" alt="arrowLeft">
                     </div>
@@ -29,7 +30,7 @@
                     <div id="d" class="key">
                         <img id="arrowRight" src="Arrow_Right.png" alt="arrowRight">
                     </div>
-                    <div id="clear">Clear</div>
+                    <div id="clear" onclick="clearPrediction()">Clear</div>
                 </div>
             </div>
             <div class="arrowNText">
