@@ -1,7 +1,18 @@
 let grid = document.querySelector("#grid");
 let selectorSize = document.getElementById("selectorSize");
 let generateButton = document.getElementById("generate");
-
+let arrowLeft = document.getElementById("q");
+let arrowRight = document.getElementById("z");
+let arrowUp = document.getElementById("d");
+arrows = [arrowLeft, arrowRight, arrowUp];
+for (let arrow of arrows) {
+    arrow.addEventListener("mousedown", () => {
+        arrow.classList.add("active");
+    });
+    arrow.addEventListener("mouseup", () => {
+        arrow.classList.remove("active");
+    });
+}
 
 generateButton.addEventListener("click", () => {
     // Vérifie que la taille de la grille est bien comprise entre 3 et 40
@@ -78,5 +89,14 @@ function generateGrid(size) {
     robot.ariaColIndex = start.ariaColIndex;
     robot.textContent = "🤖";
     start.appendChild(robot);
+    openNav();
 }
+
+function openNav() {
+    document.getElementById("mySidenav").style.width = "400px";
+  }
+  
+  function closeNav() {
+    document.getElementById("mySidenav").style.width = "0";
+  }
 
