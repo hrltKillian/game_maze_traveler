@@ -71,7 +71,12 @@ function generateGrid(size) {
     // Donne une couleur aux cases de départ et d'arrivée
     start.classList.add("start");
     end.classList.add("end");
-
-    
+    // Ajoute le robot sur la case de départ
+    let robot = document.createElement("div");
+    robot.classList.add("robot");
+    robot.ariaRowIndex = start.ariaRowIndex;
+    robot.ariaColIndex = start.ariaColIndex;
+    robot.textContent = "🤖";
+    start.appendChild(robot);
 }
 
