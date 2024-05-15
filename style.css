@@ -1,0 +1,25 @@
+* {
+    margin: 0;
+    padding: 0;
+  }
+
+  body {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    background-color: #f0f0f0;
+  }
+  
+  #grid {
+    display: grid;
+    width: 600px;
+    height: 600px;
+    grid-template-columns: repeat(var(--n,32), 1fr); /* number of column here*/
+    background-color: white;
+    border: solid black 10px;
+  }
+  
+  .cell {
+    border: solid black 1px;
+  }
