@@ -31,6 +31,22 @@ body {
     border: solid black 10px;
 }
 
+.wall {
+    background-color: grey;
+}
+
 .cell {
     border: solid black 1px;
+}
+
+.start {
+    background-color: green;
+}
+
+.end {
+    background-color: red;
+}
+
+.path {
+    background-color: blue;
 }
