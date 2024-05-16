@@ -69,6 +69,10 @@ generateButton.addEventListener("click", () => {
     spinner.style.display = "flex";
     setTimeout(() => {
         generateGrid(selectorSize.value);
+        while (!verifyMazeCanBeFinished()) {
+            grid.innerHTML = "";
+            generateGrid(selectorSize.value);
+        }
         // Cache le spinner
         spinner.style.display = "none";
     }, 2000);
