@@ -8,28 +8,30 @@
 		<title>algo de recherche</title>
 	</head>
 	<body>
-        <!--Spinner-->
-					<div id="spinner">
-						<div class="loadingio-spinner-blocks-nq4q5u6dq7r">
-							<div class="ldio-x2uulkbinbj">
-								<div style="left: 38px; top: 38px; animation-delay: 0s"></div>
-								<div style="left: 80px; top: 38px; animation-delay: 0.125s"></div>
-								<div style="left: 122px; top: 38px; animation-delay: 0.25s"></div>
-								<div style="left: 38px; top: 80px; animation-delay: 0.875s"></div>
-								<div style="left: 122px; top: 80px; animation-delay: 0.375s"></div>
-								<div style="left: 38px; top: 122px; animation-delay: 0.75s"></div>
-								<div style="left: 80px; top: 122px; animation-delay: 0.625s"></div>
-								<div style="left: 122px; top: 122px; animation-delay: 0.5s"></div>
-							</div>
-						</div>
-					</div>
-					<!---->
+		<!--Spinner-->
+		<div id="spinner">
+			<div class="loadingio-spinner-blocks-nq4q5u6dq7r">
+				<div class="ldio-x2uulkbinbj">
+					<div style="left: 38px; top: 38px; animation-delay: 0s"></div>
+					<div style="left: 80px; top: 38px; animation-delay: 0.125s"></div>
+					<div style="left: 122px; top: 38px; animation-delay: 0.25s"></div>
+					<div style="left: 38px; top: 80px; animation-delay: 0.875s"></div>
+					<div style="left: 122px; top: 80px; animation-delay: 0.375s"></div>
+					<div style="left: 38px; top: 122px; animation-delay: 0.75s"></div>
+					<div style="left: 80px; top: 122px; animation-delay: 0.625s"></div>
+					<div style="left: 122px; top: 122px; animation-delay: 0.5s"></div>
+				</div>
+			</div>
+		</div>
+		<!---->
+        <p id="history">Historique des Prédictions</p>
 		<div id="listPrediction" class="sidePrediction"></div>
 
 		<div class="selector">
 			<input id="selectorSize" type="number" min="3" max="40" />
 			<button id="generate">Générer</button>
-            <button id="start" onclick="startRobotMouvements()">Start</button>
+			<button id="start" onclick="startRobotMouvements()">Start</button>
+			<p id="text"></p>
 		</div>
 		<div class="gridNArrow">
 			<div class="gridNKeys">
@@ -48,10 +50,12 @@
 					<div id="clear" onclick="clearPrediction()">Clear</div>
 				</div>
 			</div>
-			<div id="arrowNText">
-				<p>Robot direction</p>
+            
+			<div id="arrowDiv">
+                <p id="directionText">Direction du robot</p>
 				<img id="arrow" src="Arrow_Icon.png" alt="arrow" />
 			</div>
 		</div>
+        
 	</body>
 </html>

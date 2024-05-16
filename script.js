@@ -9,12 +9,15 @@ let arrowRight = document.getElementById("z");
 let arrowUp = document.getElementById("d");
 let spinner = document.getElementById("spinner");
 let keys = document.getElementById("keys");
-let arrowNText = document.getElementById("arrowNText");
+let arrowDiv = document.getElementById("arrowDiv");
+let text = document.getElementById("text");
+let historyText = document.getElementById("history");
 
 // Cache le spinner, les flèches directionnelles
 spinner.style.display = "none";
 keys.style.display = "none";
-arrowNText.style.display = "none";
+arrowDiv.style.display = "none";
+historyText.style.display = "none";
 
 // Initialise les variables pour pouvoir les utiliser dans les fonctions
 let RobotStartDirection = "";
@@ -90,15 +93,23 @@ function addArrowInPrediction(arrowId) {
 }
 
 generateButton.addEventListener("click", () => {
+    text.textContent = "";
     // Vérifie que la taille de la grille est bien comprise entre 3 et 40
     if (selectorSize.value < 3 || selectorSize.value > 40) {
-        alert("Please enter a number between 3 and 40.");
+        text.textContent = "La taille de la grille doit être comprise entre 3 et 40";
         return;
     }
     // Vide la grille pour éviter les bugs
     grid.innerHTML = "";
     // Affiche le spinner
     spinner.style.display = "flex";
+    // Ferme la liste des prédictions
+    closePrediction();
+    // Cache la flèche de direction du robot
+    hideArrowDirection();
+    // Cache les touches directionnelles
+    hideKeys();
+
     setTimeout(() => {
         generateGrid(selectorSize.value);
         while (!verifyMazeCanBeFinished()) {
@@ -107,14 +118,17 @@ generateButton.addEventListener("click", () => {
         }
         // Cache le spinner
         spinner.style.display = "none";
+        // Affiche les touches directionnelles
+        showKeys();
+        // Affiche la flèche de direction du robot
+        showArrowDirection();
+        // Vide les prédictions et les affiche
+        clearPrediction();
+        openPrediction();
     }, 2000);
-    keys.style.display = "flex";
-    arrowNText.style.display = "flex";
 });
 
 function generateGrid(size) {
-    // Ferme la liste des prédictions et affiche le spinner
-    closePrediction();
     let starts = [];
     let ends = [];
     // Permet de transmettre la taille de la grille (size) à la grille en CSS (variable --n)
@@ -182,18 +196,36 @@ function generateGrid(size) {
     robot.ariaColIndex = start.ariaColIndex;
     robot.textContent = "🤖";
     start.appendChild(robot);
-    // Vide les prédictions et les affiche
-    clearPrediction();
-    openPrediction();
 }
 
 function openPrediction() {
     document.getElementById("listPrediction").style.width = "400px";
     document.getElementById("listPrediction").style.padding = "30px";
+    setTimeout(() => {
+        historyText.style.display = "block";
+    }, 500);
+
 }
 
 function closePrediction() {
     document.getElementById("listPrediction").style.width = "0";
+    historyText.style.display = "none";
+}
+
+function hideArrowDirection() {
+    arrowDiv.style.display = "none";
+}
+
+function showArrowDirection() {
+    arrowDiv.style.display = "flex";
+}
+
+function hideKeys() {
+    keys.style.display = "none";
+}
+
+function showKeys() {
+    keys.style.display = "flex";
 }
 
 function giveRandomDirection() {
@@ -327,12 +359,13 @@ function verifyMazeCanBeFinished() {
 }
 
 function startRobotMouvements() {
+    text.textContent = "";
     let listPrediction = document.getElementById("listPrediction");
     predictions = listPrediction.children;
     predictions = Array.from(predictions);
     predictions = predictions.map(prediction => prediction.alt);
     if (predictions.length == 0) {
-        alert("Try to move the robot !");
+        text.textContent = "Essayez de donner des instructions au robot avant de le lancer";
         return;
     }
     let robot = document.querySelector(".robot");
@@ -355,6 +388,7 @@ function startRobotMouvements() {
         wallsCoordonates.push([wallX, wallY]);
     }
     while (predictions.length > 0) {
+        text.textContent = "";
         let prediction = predictions.shift();
         if (prediction == "q") {
             robotDirection = turnLeft(robotDirection);
@@ -364,7 +398,7 @@ function startRobotMouvements() {
                 if (robotRow > 0 && !wallsCoordonates.some(arr => arr[0] === (robotRow - 1) && arr[1] === robotCol)) {
                     robotRow--;
                 } else {
-                    alert("Le robot ne peut pas aller en haut");
+                    text.textContent = "Le robot ne peut pas aller en haut";
                     resetRobot();
                     resetVisited();
                     return;
@@ -373,7 +407,7 @@ function startRobotMouvements() {
                 if (robotRow < (+selectorSize.value - 1) && !wallsCoordonates.some(arr => arr[0] === (robotRow + 1) && arr[1] === robotCol)) {
                     robotRow++;
                 } else {
-                    alert("Le robot ne peut pas aller en bas");
+                    text.textContent = "Le robot ne peut pas aller en bas";
                     resetRobot();
                     resetVisited();
                     return;
@@ -382,7 +416,7 @@ function startRobotMouvements() {
                 if (robotCol > 0 && !wallsCoordonates.some(arr => arr[0] === robotRow && arr[1] === (robotCol - 1))) {
                     robotCol--;
                 } else {
-                    alert("Le robot ne peut pas aller à gauche");
+                    text.textContent = "Le robot ne peut pas aller à gauche";
                     resetRobot();
                     resetVisited();
                     return;
@@ -391,7 +425,7 @@ function startRobotMouvements() {
                 if (robotCol < (+selectorSize.value - 1) && !wallsCoordonates.some(arr => arr[0] === robotRow && arr[1] === (robotCol + 1))) {
                     robotCol++;
                 } else {
-                    alert("Le robot ne peut pas aller à droite");
+                    text.textContent = "Le robot ne peut pas aller à droite";
                     resetRobot();
                     resetVisited();
                     return;
@@ -403,14 +437,6 @@ function startRobotMouvements() {
         // On enlève le robot de sa case actuelle
         let cell = document.querySelector(`[aria-rowindex="${robot.ariaRowIndex}"][aria-colindex="${robot.ariaColIndex}"]`);
         cell.removeChild(robot);
-        // On colorie la case visitée en orange sauf si c'est la case de départ ou d'arrivée ou si elle est déjà visitée
-        if (!cell.classList.contains("start") && !cell.classList.contains("end") && !cell.classList.contains("visited")) {
-            // si la case est un chemin, on enlève le chemin et on la colore en orange
-            if (cell.classList.contains("path")) {
-                cell.classList.remove("path");
-            }
-            cell.classList.add("visited");
-        }
         // On déplace le robot
         robot.ariaRowIndex = robotRow;
         robot.ariaColIndex = robotCol;
@@ -422,9 +448,17 @@ function startRobotMouvements() {
         robotCol = robot.ariaColIndex;
         robotRow = +robotRow;
         robotCol = +robotCol;
+        // On colorie la case visitée en orange sauf si c'est la case de départ ou d'arrivée ou si elle est déjà visitée
+        if (!newCell.classList.contains("start") && !newCell.classList.contains("end") && !newCell.classList.contains("visited")) {
+            // si la case est un chemin, on enlève le chemin et on la colore en orange
+            if (newCell.classList.contains("path")) {
+                newCell.classList.remove("path");
+            }
+            newCell.classList.add("visited");
+        }
         // Si le robot est sur la case d'arrivée, le jeu est gagné
         if (robotRow == endRow && robotCol == endCol) {
-            alert("You won!");
+            text.textContent = "Bravo, vous avez gagné !";
             return;
         }
     }

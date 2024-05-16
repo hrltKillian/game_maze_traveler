@@ -47,19 +47,6 @@ img {
     align-items: center;
 }
 
-#arrowNText {
-    position: absolute;
-    top: 100px;
-    right: 50px;
-}
-
-#keys {
-    display: flex;
-    flex-direction: row;
-    justify-content: center;
-    align-items: center;
-}
-
 .key {
     border: solid black 1px;
     margin: 10px;
@@ -148,6 +135,25 @@ img {
     border: solid black 10px;
 }
 
+#arrowDiv {
+    position: absolute;
+    top: 100px;
+    right: 50px;
+}
+
+#directionText {
+    position: absolute;
+    top: 100px;
+    right: 300px;
+}
+
+#keys {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+}
+
 #arrow {
     width: 500px;
 }
@@ -158,6 +164,13 @@ img {
 
 #arrowRight, .arrowRight {
     rotate: 90deg;
+}
+
+#history {
+    position: absolute;
+    top: 20px;
+    left: 130px;
+    z-index: 2;
 }
 
 /* Spinner*/
