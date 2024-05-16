@@ -19,6 +19,7 @@ arrowNText.style.display = "none";
 // Initialise les variables pour pouvoir les utiliser dans les fonctions
 let RobotStartDirection = "";
 let rotation = "";
+let startRobotDirection = "";
 
 arrows = [arrowLeft, arrowRight, arrowUp];
 for (let arrow of arrows) {
@@ -78,10 +79,6 @@ generateButton.addEventListener("click", () => {
     }, 2000);
     keys.style.display = "flex";
     arrowNText.style.display = "flex";
-    rotation = giveRandomDirection();
-    RobotStartDirection = getRobotStartDirection(rotation);
-    
-    
 });
 
 function generateGrid(size) {
@@ -146,6 +143,10 @@ function generateGrid(size) {
     // Ajoute le robot sur la case de départ
     let robot = document.createElement("div");
     robot.classList.add("robot");
+    // Donne une direction aléatoire au robot
+    rotation = giveRandomDirection();
+    startRobotDirection = getRobotStartDirection(rotation);
+    robot.ariaLevel = startRobotDirection;
     robot.ariaRowIndex = start.ariaRowIndex;
     robot.ariaColIndex = start.ariaColIndex;
     robot.textContent = "🤖";
@@ -167,6 +168,7 @@ function closePrediction() {
 function giveRandomDirection() {
     let rotation = Math.floor(Math.random() * 4) * 90;
     arrowDirection.style.transform = `rotate(${rotation}deg)`;
+    console.log(rotation);
     return rotation;
 }
 
@@ -175,7 +177,13 @@ function getRobotStartDirection(rotation) {
     return directions[rotation / 90];
 }
 
-function verifyMazeCanBeFinished(){
+function getRobotDirection() {
+    let robot = document.querySelector(".robot");
+    let rotation = robot.ariaLevel;
+    return rotation;
+}
+
+function verifyMazeCanBeFinished() {
     let robot = document.querySelector(".robot");
     let end = document.querySelector(".end");
     let walls = document.querySelectorAll(".wall");
@@ -218,43 +226,43 @@ function verifyMazeCanBeFinished(){
             return true;
         }
         // Si la case du dessus est le bord ou un mur ou a déjà été visitée, le robot ne peut pas aller en haut
-        if (row <= 0){
+        if (row <= 0) {
             noUp = true;
-        } else if (wallsCoordonates.some(arr => arr[0] === row-1 && arr[1] === col)){
+        } else if (wallsCoordonates.some(arr => arr[0] === row - 1 && arr[1] === col)) {
             noUp = true;
-        } else if (visited.some(arr => arr[0] === row-1 && arr[1] === col)){
+        } else if (visited.some(arr => arr[0] === row - 1 && arr[1] === col)) {
             noUp = true;
-        } else if (paths.some(arr => arr[0] === row-1 && arr[1] === col)){
+        } else if (paths.some(arr => arr[0] === row - 1 && arr[1] === col)) {
             noUp = true;
         }
         // Si la case du bas est le bord ou un mur ou a déjà été visitée, le robot ne peut pas aller en bas
-        if (row >= (+selectorSize.value - 1)){
+        if (row >= (+selectorSize.value - 1)) {
             noDown = true;
-        } else if (wallsCoordonates.some(arr => arr[0] === (row+1) && arr[1] === col)){
+        } else if (wallsCoordonates.some(arr => arr[0] === (row + 1) && arr[1] === col)) {
             noDown = true;
-        } else if (visited.some(arr => arr[0] === (row+1) && arr[1] === col)){
+        } else if (visited.some(arr => arr[0] === (row + 1) && arr[1] === col)) {
             noDown = true;
-        } else if (paths.some(arr => arr[0] === (row+1) && arr[1] === col)){
+        } else if (paths.some(arr => arr[0] === (row + 1) && arr[1] === col)) {
             noDown = true;
         }
         // Si la case de gauche est le bord ou un mur ou a déjà été visitée, le robot ne peut pas aller à gauche
-        if (col <= 0){
+        if (col <= 0) {
             noLeft = true;
-        } else if (wallsCoordonates.some(arr => arr[0] === row && arr[1] === col-1)){
+        } else if (wallsCoordonates.some(arr => arr[0] === row && arr[1] === col - 1)) {
             noLeft = true;
-        } else if (visited.some(arr => arr[0] === row && arr[1] === col-1)){
+        } else if (visited.some(arr => arr[0] === row && arr[1] === col - 1)) {
             noLeft = true;
-        } else if (paths.some(arr => arr[0] === row && arr[1] === col-1)){
+        } else if (paths.some(arr => arr[0] === row && arr[1] === col - 1)) {
             noLeft = true;
         }
         // Si la case de droite est le bord ou un mur ou a déjà été visitée, le robot ne peut pas aller à droite
-        if (col >= (+selectorSize.value - 1)){
+        if (col >= (+selectorSize.value - 1)) {
             noRight = true;
-        } else if (wallsCoordonates.some(arr => arr[0] === row && arr[1] === (col+1))){
+        } else if (wallsCoordonates.some(arr => arr[0] === row && arr[1] === (col + 1))) {
             noRight = true;
-        } else if (visited.some(arr => arr[0] === row && arr[1] === (col+1))){
+        } else if (visited.some(arr => arr[0] === row && arr[1] === (col + 1))) {
             noRight = true;
-        } else if (paths.some(arr => arr[0] === row && arr[1] === (col+1))){
+        } else if (paths.some(arr => arr[0] === row && arr[1] === (col + 1))) {
             noRight = true;
         }
         // Si la case n'a pas déjà été visitée, on l'ajoute à la liste des cases visitées
@@ -287,10 +295,172 @@ function verifyMazeCanBeFinished(){
     return false;
 }
 
-function test(){
-    if (verifyMazeCanBeFinished()){
-        alert("The maze can be finished");
-    } else {
-        alert("The maze can't be finished");
+function startRobotMouvements() {
+    let robot = document.querySelector(".robot");
+    let robotRow = robot.ariaRowIndex;
+    let robotCol = robot.ariaColIndex;
+    robotRow = +robotRow;
+    robotCol = +robotCol;
+    let walls = document.querySelectorAll(".wall");
+    let end = document.querySelector(".end");
+    let endRow = end.ariaRowIndex;
+    let endCol = end.ariaColIndex;
+    endRow = +endRow;
+    endCol = +endCol;
+    let wallsCoordonates = [];
+    let robotDirection = getRobotDirection();
+    let listPrediction = document.getElementById("listPrediction");
+    predictions = listPrediction.children;
+    predictions = Array.from(predictions);
+    predictions = predictions.map(prediction => prediction.alt);
+    let coordonates = [];
+    for (let wall of walls) {
+        let wallX = +wall.ariaRowIndex;
+        let wallY = +wall.ariaColIndex;
+        wallsCoordonates.push([wallX, wallY]);
+    }
+    while (predictions.length > 0) {
+        let prediction = predictions.shift();
+        if (prediction == "q") {
+            robotDirection = turnLeft(robotDirection);
+        } else if (prediction == "z") {
+            // Si le robot peut aller en haut, on le déplace
+            if (robotDirection == "up") {
+                if (robotRow > 0 && !wallsCoordonates.some(arr => arr[0] === (robotRow - 1) && arr[1] === robotCol)) {
+                    robotRow--;
+                } else {
+                    alert("Le robot ne peut pas aller en haut");
+                    resetRobot();
+                    resetVisited();
+                    return;
+                }
+            } else if (robotDirection == "down") {
+                if (robotRow < (+selectorSize.value - 1) && !wallsCoordonates.some(arr => arr[0] === (robotRow + 1) && arr[1] === robotCol)) {
+                    robotRow++;
+                } else {
+                    alert("Le robot ne peut pas aller en bas");
+                    resetRobot();
+                    resetVisited();
+                    return;
+                }
+            } else if (robotDirection == "left") {
+                if (robotCol > 0 && !wallsCoordonates.some(arr => arr[0] === robotRow && arr[1] === (robotCol - 1))) {
+                    robotCol--;
+                } else {
+                    alert("Le robot ne peut pas aller à gauche");
+                    resetRobot();
+                    resetVisited();
+                    return;
+                }
+            } else if (robotDirection == "right") {
+                if (robotCol < (+selectorSize.value - 1) && !wallsCoordonates.some(arr => arr[0] === robotRow && arr[1] === (robotCol + 1))) {
+                    robotCol++;
+                } else {
+                    alert("Le robot ne peut pas aller à droite");
+                    resetRobot();
+                    resetVisited();
+                    return;
+                }
+            }
+        } else if (prediction == "d") {
+            robotDirection = turnRight(robotDirection);
+        }
+        // On enlève le robot de sa case actuelle
+        let cell = document.querySelector(`[aria-rowindex="${robot.ariaRowIndex}"][aria-colindex="${robot.ariaColIndex}"]`);
+        cell.removeChild(robot);
+        // On colorie la case visitée en orange sauf si c'est la case de départ ou d'arrivée ou si elle est déjà visitée
+        if (!cell.classList.contains("start") && !cell.classList.contains("end") && !cell.classList.contains("visited")) {
+            // si la case est un chemin, on enlève le chemin et on la colore en orange
+            if (cell.classList.contains("path")) {
+                cell.classList.remove("path");
+            }
+            cell.classList.add("visited");
+        }
+        // On déplace le robot
+        robot.ariaRowIndex = robotRow;
+        robot.ariaColIndex = robotCol;
+        let newCell = document.querySelector(`[aria-rowindex="${robotRow}"][aria-colindex="${robotCol}"]`);
+        newCell.appendChild(robot);
+        robot.ariaLevel = robotDirection;
+        // Réinitialise les variables pour la prochaine itération
+        robotRow = robot.ariaRowIndex;
+        robotCol = robot.ariaColIndex;
+        robotRow = +robotRow;
+        robotCol = +robotCol;
+        // Si le robot est sur la case d'arrivée, le jeu est gagné
+        if (robotRow == endRow && robotCol == endCol) {
+            alert("You won!");
+            return;
+        }
+    }
+}
+
+function resetRobot() {
+    // Enlève le robot de la case actuelle
+    let robot = document.querySelector(".robot");
+    let robotRow = robot.ariaRowIndex;
+    let robotCol = robot.ariaColIndex;
+    let cell = document.querySelector(`[aria-rowindex="${robotRow}"][aria-colindex="${robotCol}"]`);
+    cell.removeChild(robot);
+    // Remet le robot sur la case de départ
+    let start = document.querySelector(".start");
+    robot.ariaRowIndex = start.ariaRowIndex;
+    robot.ariaColIndex = start.ariaColIndex;
+    robot.ariaLevel = startRobotDirection;
+    resetArrowRotation(startRobotDirection);
+    start.appendChild(robot);
+}
+
+function resetArrowRotation(startRobotDirection) {
+    if (startRobotDirection == "right") {
+        rotation = 0;
+    } else if (startRobotDirection == "down") {
+        rotation = 90;
+    } else if (startRobotDirection == "left") {
+        rotation = 180;
+    } else if (startRobotDirection == "up") {
+        rotation = 270;
+    }
+    arrowDirection.style.transform = `rotate(${rotation}deg)`;
+}
+
+function resetVisited() {
+    // Remet les cases visitées en cases normales
+    let visited = document.getElementsByClassName("visited");
+    visited = Array.from(visited);
+    visited.forEach(cell => {
+        cell.classList.remove("visited");
+    });
+}
+
+function turnLeft(direction) {
+    if (direction == "right") {
+        arrowDirection.style.transform = "rotate(270deg)";
+        return "up";
+    } else if (direction == "down") {
+        arrowDirection.style.transform = "rotate(0deg)";
+        return "right";
+    } else if (direction == "left") {
+        arrowDirection.style.transform = "rotate(90deg)";
+        return "down";
+    } else if (direction == "up") {
+        arrowDirection.style.transform = "rotate(180deg)";
+        return "left";
+    }
+}
+
+function turnRight(direction) {
+    if (direction == "right") {
+        arrowDirection.style.transform = "rotate(90deg)";
+        return "down";
+    } else if (direction == "down") {
+        arrowDirection.style.transform = "rotate(180deg)";
+        return "left";
+    } else if (direction == "left") {
+        arrowDirection.style.transform = "rotate(270deg)";
+        return "up";
+    } else if (direction == "up") {
+        arrowDirection.style.transform = "rotate(0deg)";
+        return "right";
     }
 }
