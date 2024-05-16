@@ -13,12 +13,17 @@ let historyText = document.getElementById("history");
 let game = document.getElementById("game");
 let level = document.getElementById("level");
 let total = document.getElementById("total");
+let finish = document.getElementById("finish");
 
 // Cache le spinner, les flèches directionnelles
 spinner.style.display = "none";
 keys.style.display = "none";
 arrowDiv.style.display = "none";
 historyText.style.display = "none";
+start.style.display = "none";
+level.style.display = "none";
+total.style.display = "none";
+finish.style.display = "none";
 
 // Initialise les variables pour pouvoir les utiliser dans les fonctions
 let RobotStartDirection = "";
@@ -245,13 +250,15 @@ function verifyMazeCanBeFinished() {
         // Si le robot est sur la case d'arrivée, le labyrinthe peut être fini
         if (row == endRow && col == endCol) {
             // Colore les cases visitées en orange
-            /*visited.shift();
+            /*
+            visited.shift();
             visited.forEach((arr, index) => {
                 setTimeout(() => {
                     let cell = document.querySelector(`[aria-rowindex="${arr[0]}"][aria-colindex="${arr[1]}"]`);
                     cell.classList.add("visited");
                 }, index * 1000); // Multiplier l'index par 1000 pour obtenir un délai incrémentiel
-            });*/
+            });
+            */
             return true;
         }
         // Si la case du dessus est le bord ou un mur ou a déjà été visitée, le robot ne peut pas aller en haut
@@ -324,16 +331,141 @@ function verifyMazeCanBeFinished() {
     return false;
 }
 
+function finishMazeForYou() {
+    let robot = document.querySelector(".robot");
+    let end = document.querySelector(".end");
+    let walls = document.querySelectorAll(".wall");
+    let robotRow = robot.ariaRowIndex;
+    let robotCol = robot.ariaColIndex;
+    let endRow = end.ariaRowIndex;
+    let endCol = end.ariaColIndex;
+    let visited = [];
+    let wallsCoordonates = [];
+    let noUp = false;
+    let noDown = false;
+    let noLeft = false;
+    let noRight = false;
+
+    robotRow = +robotRow;
+    robotCol = +robotCol;
+    endRow = +endRow;
+    endCol = +endCol;
+    for (let wall of walls) {
+        let wallX = +wall.ariaRowIndex;
+        let wallY = +wall.ariaColIndex;
+        wallsCoordonates.push([wallX, wallY]);
+    }
+    let paths = [[robotRow, robotCol]];
+    let coordonates = [];
+    while (paths.length > 0) {
+        coordonates = paths.pop();
+        let row = coordonates[0];
+        let col = coordonates[1];
+        // Si le robot est sur la case d'arrivée, le labyrinthe peut être fini
+        if (row == endRow && col == endCol) {
+            visited.push([row, col]);
+            // Colore les cases visitées en orange
+
+            visited.shift();
+            visited.forEach((arr, index) => {
+                setTimeout(() => {
+                    // Déplace le robot sur les cases visitées et colore les cases en orange
+                    let robot = document.querySelector(".robot");
+                    let robotRow = robot.ariaRowIndex;
+                    let robotCol = robot.ariaColIndex;
+                    let cell = document.querySelector(`[aria-rowindex="${robotRow}"][aria-colindex="${robotCol}"]`);
+                    cell.removeChild(robot);
+                    robot.ariaRowIndex = arr[0];
+                    robot.ariaColIndex = arr[1];
+                    let newCell = document.querySelector(`[aria-rowindex="${arr[0]}"][aria-colindex="${arr[1]}"]`);
+                    newCell.appendChild(robot);
+                    // Si la case n'est pas la case de départ ou d'arrivée, on la colore en orange
+                    if (!newCell.classList.contains("start") && !newCell.classList.contains("end") && !newCell.classList.contains("visited")) {
+                        if (newCell.classList.contains("path")) {
+                            newCell.classList.remove("path");
+                        }
+                        newCell.classList.add("visited");
+                    }
+                }, index * 500); // Multiplier l'index par 1000 pour obtenir un délai incrémentiel
+            });
+
+            return true;
+        }
+        // Si la case du dessus est le bord ou un mur ou a déjà été visitée, le robot ne peut pas aller en haut
+        if (row <= 0) {
+            noUp = true;
+        } else if (wallsCoordonates.some(arr => arr[0] === row - 1 && arr[1] === col)) {
+            noUp = true;
+        } else if (visited.some(arr => arr[0] === row - 1 && arr[1] === col)) {
+            noUp = true;
+        } else if (paths.some(arr => arr[0] === row - 1 && arr[1] === col)) {
+            noUp = true;
+        }
+        // Si la case du bas est le bord ou un mur ou a déjà été visitée, le robot ne peut pas aller en bas
+        if (row >= (+selectorSize - 1)) {
+            noDown = true;
+        } else if (wallsCoordonates.some(arr => arr[0] === (row + 1) && arr[1] === col)) {
+            noDown = true;
+        } else if (visited.some(arr => arr[0] === (row + 1) && arr[1] === col)) {
+            noDown = true;
+        } else if (paths.some(arr => arr[0] === (row + 1) && arr[1] === col)) {
+            noDown = true;
+        }
+        // Si la case de gauche est le bord ou un mur ou a déjà été visitée, le robot ne peut pas aller à gauche
+        if (col <= 0) {
+            noLeft = true;
+        } else if (wallsCoordonates.some(arr => arr[0] === row && arr[1] === col - 1)) {
+            noLeft = true;
+        } else if (visited.some(arr => arr[0] === row && arr[1] === col - 1)) {
+            noLeft = true;
+        } else if (paths.some(arr => arr[0] === row && arr[1] === col - 1)) {
+            noLeft = true;
+        }
+        // Si la case de droite est le bord ou un mur ou a déjà été visitée, le robot ne peut pas aller à droite
+        if (col >= (+selectorSize - 1)) {
+            noRight = true;
+        } else if (wallsCoordonates.some(arr => arr[0] === row && arr[1] === (col + 1))) {
+            noRight = true;
+        } else if (visited.some(arr => arr[0] === row && arr[1] === (col + 1))) {
+            noRight = true;
+        } else if (paths.some(arr => arr[0] === row && arr[1] === (col + 1))) {
+            noRight = true;
+        }
+        // Si la case n'a pas déjà été visitée, on l'ajoute à la liste des cases visitées
+        if (!visited.some(arr => arr[0] === row && arr[1] === col)) {
+            visited.push([row, col]);
+        }
+        // Si le robot peut aller dans une direction, on ajoute cette direction à la liste des chemins possibles
+        if (!noUp) {
+            paths.push([row - 1, col]);
+        }
+
+        if (!noDown) {
+            paths.push([row + 1, col]);
+        }
+
+        if (!noLeft) {
+            paths.push([row, col - 1]);
+        }
+
+        if (!noRight) {
+            paths.push([row, col + 1]);
+        }
+        // On réinitialise les variables pour la prochaine itération
+        noUp = false;
+        noDown = false;
+        noLeft = false;
+        noRight = false;
+    }
+    // Si le robot ne peut pas atteindre la case d'arrivée, le labyrinthe ne peut pas être fini
+    return false;
+
+}
+
 function startRobotMovements() {
     text.textContent = "";
     let listPrediction = document.getElementById("listPrediction");
     let predictions = Array.from(listPrediction.children).map(prediction => prediction.alt);
-
-    if (predictions.length === 0) {
-        text.textContent = "Essayez de donner des instructions au robot avant de le lancer";
-        return;
-    }
-
     let robot = document.querySelector(".robot");
     let robotRow = +robot.ariaRowIndex;
     let robotCol = +robot.ariaColIndex;
@@ -343,6 +475,17 @@ function startRobotMovements() {
     let endCol = +end.ariaColIndex;
     let wallsCoordonates = walls.map(wall => [+wall.ariaRowIndex, +wall.ariaColIndex]);
     let robotDirection = getRobotDirection();
+
+    if (predictions.length === 0) {
+        // Si le robot est déjà sur la case d'arrivée, le jeu est gagné
+        if (robotRow === endRow && robotCol === endCol) {
+            text.textContent = "Bravo, vous avez gagné !";
+            startGame(+selectorSize + 1);
+            return;
+        }
+        text.textContent = "Essayez de donner des instructions au robot avant de le lancer";
+        return;
+    }
 
     function moveRobot(index) {
         if (index >= predictions.length) {
@@ -483,6 +626,9 @@ game.addEventListener("click", () => {
 
 function startGame(taille = 3) {
     game.style.display = "none";
+    start.style.display = "block";
+    level.style.display = "block";
+    total.style.display = "block";
     // Si le niveau est inférieur à 37, le jeu continue
     if (taille - 2 < 39) {
         // Affiche le niveau actuel

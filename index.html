@@ -28,16 +28,17 @@
 		<div id="listPrediction" class="sidePrediction"></div>
         <button id="game">Commencer le jeu</button>
         <p id="level"></p>
-        <p id="total"></p>
+        <p id="total">Score : 0</p>
 
 		<button id="start" onclick="startRobotMovements()">Lancer le robot</button>
+        <button id="finish" onclick="finishMazeForYou">Finit le labyrinthe pour toi</button>
 		<p id="text"></p>
 
 		<div class="gridNArrow">
 			<div class="gridNKeys">
 				<div id="grid"></div>
 				<div id="keys">
-					<div id="undo" onclick="undoPrediction()">Undo</div>
+					<div id="undo" onclick="undoPrediction()">Annuler</div>
 					<div id="q" class="key">
 						<img id="arrowLeft" src="Arrow_Left.png" alt="arrowLeft" />
 					</div>
@@ -47,7 +48,7 @@
 					<div id="d" class="key">
 						<img id="arrowRight" src="Arrow_Right.png" alt="arrowRight" />
 					</div>
-					<div id="clear" onclick="clearPrediction()">Clear</div>
+					<div id="clear" onclick="clearPrediction()">Effacer</div>
 				</div>
 			</div>
 
