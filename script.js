@@ -3,13 +3,19 @@ let selectorSize = document.getElementById("selectorSize");
 let generateButton = document.getElementById("generate");
 let listPrediction = document.getElementById("listPrediction");
 let start = document.getElementById("start");
+let arrowDirection = document.getElementById("arrow");
 let arrowLeft = document.getElementById("q");
 let arrowRight = document.getElementById("z");
 let arrowUp = document.getElementById("d");
 let spinner = document.getElementById("spinner");
+let keys = document.getElementById("keys");
+let arrowNText = document.getElementById("arrowNText");
 
-// Cache le spinner
+
+// Cache le spinner, les flèches directionnelles
 spinner.style.display = "none";
+keys.style.display = "none";
+arrowNText.style.display = "none";
 
 arrows = [arrowLeft, arrowRight, arrowUp];
 for (let arrow of arrows) {
@@ -45,7 +51,7 @@ function addArrowInPrediction(arrow) {
     if (arrow.id == "d") {
         listPrediction.innerHTML += `<img src="Arrow_Right.png" alt="${arrow.id}" class="arrowRight textPrediction" />`;
     }
-    
+
 }
 
 generateButton.addEventListener("click", () => {
@@ -54,20 +60,23 @@ generateButton.addEventListener("click", () => {
         alert("Please enter a number between 3 and 40.");
         return;
     }
+    // Vide la grille pour éviter les bugs
+    grid.innerHTML = "";
     // Affiche le spinner
     spinner.style.display = "flex";
     setTimeout(() => {
         generateGrid(selectorSize.value);
         // Cache le spinner
-    spinner.style.display = "none";
+        spinner.style.display = "none";
     }, 2000);
+    keys.style.display = "flex";
+    arrowNText.style.display = "flex";
+    giveRandomDirection();
 });
 
 function generateGrid(size) {
     // Ferme la liste des prédictions et affiche le spinner
     closePrediction();
-    // Vide la grille pour éviter les bugs
-    grid.innerHTML = "";
     let starts = [];
     let ends = [];
     // Permet de transmettre la taille de la grille (size) à la grille en CSS (variable --n)
@@ -80,11 +89,11 @@ function generateGrid(size) {
         div.ariaColIndex = i % size;
         // Pour chaque case de la grille, permet de donner la classe path à la case si elle est cliquée droit
         div.addEventListener("contextmenu", (e) => {
-        e.preventDefault();
-        if (div.classList.contains("start") || div.classList.contains("end") || div.classList.contains("wall")) {
-            return;
-        }
-        div.classList.toggle("path");
+            e.preventDefault();
+            if (div.classList.contains("start") || div.classList.contains("end") || div.classList.contains("wall")) {
+                return;
+            }
+            div.classList.toggle("path");
         });
 
         // récupére les potentielles cases de départ et d'arrivée
@@ -139,9 +148,15 @@ function generateGrid(size) {
 function openPrediction() {
     document.getElementById("listPrediction").style.width = "400px";
     document.getElementById("listPrediction").style.padding = "30px";
-  }
-  
-  function closePrediction() {
+}
+
+function closePrediction() {
     document.getElementById("listPrediction").style.width = "0";
-  }
+}
+
+function giveRandomDirection() {
+    let rotation = Math.floor(Math.random() * 4) * 90;
+    arrowDirection.style.transform = `rotate(${rotation}deg)`;
+}
+
 
