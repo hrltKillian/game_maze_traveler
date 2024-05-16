@@ -21,10 +21,41 @@ let RobotStartDirection = "";
 let rotation = "";
 let startRobotDirection = "";
 
+// Vérifie si une touche est appuyée
+document.addEventListener("keydown", (e) => {
+    // Si les touches q, z ou d sont appuyées, on ajoute la flèche correspondante à la liste des prédictions
+    if (e.key == "q" || e.key == "z" || e.key == "d") {
+        addArrowInPrediction(e.key);
+        let arrow = document.getElementById(e.key);
+        arrow.classList.add("active");
+    }
+    // Si la touche Entrée est appuyée, on lance les mouvements du robot
+    if (e.key == "Enter") {
+        startRobotMouvements();
+    }
+    // Si la touche a est appuyée, on enlève la dernière prédiction
+    if (e.key == "a") {
+        undoPrediction();
+    }
+    // Si la touche e est appuyée, on vide les prédictions
+    if (e.key == "e") {
+        clearPrediction();
+    }
+});
+
+// Vérifie si une touche est relâchée
+document.addEventListener("keyup", (e) => {
+    // Si les touches q, z ou d sont relâchées, on enlève la classe active de la flèche correspondante
+    if (e.key == "q" || e.key == "z" || e.key == "d") {
+        let arrow = document.getElementById(e.key);
+        arrow.classList.remove("active");
+    }
+});
+
 arrows = [arrowLeft, arrowRight, arrowUp];
 for (let arrow of arrows) {
     arrow.addEventListener("mousedown", () => {
-        addArrowInPrediction(arrow);
+        addArrowInPrediction(arrow.id);
         arrow.classList.add("active");
     });
     arrow.addEventListener("mouseup", () => {
@@ -44,16 +75,16 @@ function clearPrediction() {
 }
 
 
-function addArrowInPrediction(arrow) {
+function addArrowInPrediction(arrowId) {
     // Ajoute l'ID de la flèche à la liste des prédictions
-    if (arrow.id == "q") {
-        listPrediction.innerHTML += `<img src="Arrow_Left.png" alt="${arrow.id}" class="arrowLeft textPrediction" />`;
+    if (arrowId == "q") {
+        listPrediction.innerHTML += `<img src="Arrow_Left.png" alt="${arrowId}" class="arrowLeft textPrediction" />`;
     }
-    if (arrow.id == "z") {
-        listPrediction.innerHTML += `<img src="Arrow_Icon.png" alt="${arrow.id}" class="arrowUp textPrediction" />`;
+    if (arrowId == "z") {
+        listPrediction.innerHTML += `<img src="Arrow_Icon.png" alt="${arrowId}" class="arrowUp textPrediction" />`;
     }
-    if (arrow.id == "d") {
-        listPrediction.innerHTML += `<img src="Arrow_Right.png" alt="${arrow.id}" class="arrowRight textPrediction" />`;
+    if (arrowId == "d") {
+        listPrediction.innerHTML += `<img src="Arrow_Right.png" alt="${arrowId}" class="arrowRight textPrediction" />`;
     }
 
 }
@@ -296,6 +327,14 @@ function verifyMazeCanBeFinished() {
 }
 
 function startRobotMouvements() {
+    let listPrediction = document.getElementById("listPrediction");
+    predictions = listPrediction.children;
+    predictions = Array.from(predictions);
+    predictions = predictions.map(prediction => prediction.alt);
+    if (predictions.length == 0) {
+        alert("Try to move the robot !");
+        return;
+    }
     let robot = document.querySelector(".robot");
     let robotRow = robot.ariaRowIndex;
     let robotCol = robot.ariaColIndex;
@@ -309,10 +348,6 @@ function startRobotMouvements() {
     endCol = +endCol;
     let wallsCoordonates = [];
     let robotDirection = getRobotDirection();
-    let listPrediction = document.getElementById("listPrediction");
-    predictions = listPrediction.children;
-    predictions = Array.from(predictions);
-    predictions = predictions.map(prediction => prediction.alt);
     let coordonates = [];
     for (let wall of walls) {
         let wallX = +wall.ariaRowIndex;
