@@ -156,6 +156,8 @@ img {
 
 #arrow {
     width: 500px;
+    transition: 0.5s;
+    z-index: 1;
 }
 
 #arrowLeft, #arrowUp, .arrowLeft, .arrowUp {
