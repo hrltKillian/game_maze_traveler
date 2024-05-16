@@ -322,112 +322,80 @@ function verifyMazeCanBeFinished() {
     return false;
 }
 
-function startRobotMouvements() {
+function startRobotMovements() {
     text.textContent = "";
     let listPrediction = document.getElementById("listPrediction");
-    predictions = listPrediction.children;
-    predictions = Array.from(predictions);
-    predictions = predictions.map(prediction => prediction.alt);
-    if (predictions.length == 0) {
+    let predictions = Array.from(listPrediction.children).map(prediction => prediction.alt);
+
+    if (predictions.length === 0) {
         text.textContent = "Essayez de donner des instructions au robot avant de le lancer";
         return;
     }
+
     let robot = document.querySelector(".robot");
-    let robotRow = robot.ariaRowIndex;
-    let robotCol = robot.ariaColIndex;
-    robotRow = +robotRow;
-    robotCol = +robotCol;
-    let walls = document.querySelectorAll(".wall");
+    let robotRow = +robot.ariaRowIndex;
+    let robotCol = +robot.ariaColIndex;
+    let walls = Array.from(document.querySelectorAll(".wall"));
     let end = document.querySelector(".end");
-    let endRow = end.ariaRowIndex;
-    let endCol = end.ariaColIndex;
-    endRow = +endRow;
-    endCol = +endCol;
-    let wallsCoordonates = [];
+    let endRow = +end.ariaRowIndex;
+    let endCol = +end.ariaColIndex;
+    let wallsCoordonates = walls.map(wall => [+wall.ariaRowIndex, +wall.ariaColIndex]);
     let robotDirection = getRobotDirection();
-    let coordonates = [];
-    for (let wall of walls) {
-        let wallX = +wall.ariaRowIndex;
-        let wallY = +wall.ariaColIndex;
-        wallsCoordonates.push([wallX, wallY]);
-    }
-    while (predictions.length > 0) {
-        text.textContent = "";
-        let prediction = predictions.shift();
-        if (prediction == "q") {
+
+    function moveRobot(index) {
+        if (index >= predictions.length) {
+            return;
+        }
+
+        let prediction = predictions[index];
+        if (prediction === "q") {
             robotDirection = turnLeft(robotDirection);
-        } else if (prediction == "z") {
-            // Si le robot peut aller en haut, on le déplace
-            if (robotDirection == "up") {
-                if (robotRow > 0 && !wallsCoordonates.some(arr => arr[0] === (robotRow - 1) && arr[1] === robotCol)) {
-                    robotRow--;
-                } else {
-                    text.textContent = "Le robot ne peut pas aller en haut";
-                    resetRobot();
-                    resetVisited();
-                    return;
-                }
-            } else if (robotDirection == "down") {
-                if (robotRow < (+selectorSize - 1) && !wallsCoordonates.some(arr => arr[0] === (robotRow + 1) && arr[1] === robotCol)) {
-                    robotRow++;
-                } else {
-                    text.textContent = "Le robot ne peut pas aller en bas";
-                    resetRobot();
-                    resetVisited();
-                    return;
-                }
-            } else if (robotDirection == "left") {
-                if (robotCol > 0 && !wallsCoordonates.some(arr => arr[0] === robotRow && arr[1] === (robotCol - 1))) {
-                    robotCol--;
-                } else {
-                    text.textContent = "Le robot ne peut pas aller à gauche";
-                    resetRobot();
-                    resetVisited();
-                    return;
-                }
-            } else if (robotDirection == "right") {
-                if (robotCol < (+selectorSize - 1) && !wallsCoordonates.some(arr => arr[0] === robotRow && arr[1] === (robotCol + 1))) {
-                    robotCol++;
-                } else {
-                    text.textContent = "Le robot ne peut pas aller à droite";
-                    resetRobot();
-                    resetVisited();
-                    return;
-                }
+        } else if (prediction === "z") {
+            if (robotDirection === "up" && robotRow > 0 && !wallsCoordonates.some(arr => arr[0] === (robotRow - 1) && arr[1] === robotCol)) {
+                robotRow--;
+            } else if (robotDirection === "down" && robotRow < (+selectorSize - 1) && !wallsCoordonates.some(arr => arr[0] === (robotRow + 1) && arr[1] === robotCol)) {
+                robotRow++;
+            } else if (robotDirection === "left" && robotCol > 0 && !wallsCoordonates.some(arr => arr[0] === robotRow && arr[1] === (robotCol - 1))) {
+                robotCol--;
+            } else if (robotDirection === "right" && robotCol < (+selectorSize - 1) && !wallsCoordonates.some(arr => arr[0] === robotRow && arr[1] === (robotCol + 1))) {
+                robotCol++;
+            } else {
+                text.textContent = "Le robot ne peut pas aller dans cette direction";
+                resetRobot();
+                resetVisited();
+                return;
             }
-        } else if (prediction == "d") {
+        } else if (prediction === "d") {
             robotDirection = turnRight(robotDirection);
         }
-        // On enlève le robot de sa case actuelle
+
         let cell = document.querySelector(`[aria-rowindex="${robot.ariaRowIndex}"][aria-colindex="${robot.ariaColIndex}"]`);
         cell.removeChild(robot);
-        // On déplace le robot
+
         robot.ariaRowIndex = robotRow;
         robot.ariaColIndex = robotCol;
         let newCell = document.querySelector(`[aria-rowindex="${robotRow}"][aria-colindex="${robotCol}"]`);
         newCell.appendChild(robot);
         robot.ariaLevel = robotDirection;
-        // Réinitialise les variables pour la prochaine itération
-        robotRow = robot.ariaRowIndex;
-        robotCol = robot.ariaColIndex;
-        robotRow = +robotRow;
-        robotCol = +robotCol;
-        // On colorie la case visitée en orange sauf si c'est la case de départ ou d'arrivée ou si elle est déjà visitée
+
         if (!newCell.classList.contains("start") && !newCell.classList.contains("end") && !newCell.classList.contains("visited")) {
-            // si la case est un chemin, on enlève le chemin et on la colore en orange
             if (newCell.classList.contains("path")) {
                 newCell.classList.remove("path");
             }
             newCell.classList.add("visited");
         }
-        // Si le robot est sur la case d'arrivée, le jeu est gagné
-        if (robotRow == endRow && robotCol == endCol) {
+
+        if (robotRow === endRow && robotCol === endCol) {
             text.textContent = "Bravo, vous avez gagné !";
             startGame(+selectorSize + 1);
             return;
         }
+
+        setTimeout(() => moveRobot(index + 1), 500); // Délai de 1 seconde entre chaque mouvement
     }
+    moveRobot(0);
 }
+
 
 function resetRobot() {
     // Enlève le robot de la case actuelle
