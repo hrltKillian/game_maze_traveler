@@ -8,35 +8,50 @@
 		<title>algo de recherche</title>
 	</head>
 	<body>
-        <div id="listPrediction" class="sidePrediction">
-          </div>
-          
+        <!--Spinner-->
+					<div id="spinner">
+						<div class="loadingio-spinner-blocks-nq4q5u6dq7r">
+							<div class="ldio-x2uulkbinbj">
+								<div style="left: 38px; top: 38px; animation-delay: 0s"></div>
+								<div style="left: 80px; top: 38px; animation-delay: 0.125s"></div>
+								<div style="left: 122px; top: 38px; animation-delay: 0.25s"></div>
+								<div style="left: 38px; top: 80px; animation-delay: 0.875s"></div>
+								<div style="left: 122px; top: 80px; animation-delay: 0.375s"></div>
+								<div style="left: 38px; top: 122px; animation-delay: 0.75s"></div>
+								<div style="left: 80px; top: 122px; animation-delay: 0.625s"></div>
+								<div style="left: 122px; top: 122px; animation-delay: 0.5s"></div>
+							</div>
+						</div>
+					</div>
+					<!---->
+		<div id="listPrediction" class="sidePrediction"></div>
+
 		<div class="selector">
 			<input id="selectorSize" type="number" min="3" max="40" />
 			<button id="generate">Générer</button>
-            <button id="start">Start</button>
+			<button id="start">Start</button>
 		</div>
-        <div class="gridNArrow">
-            <div class="gridNKeys">
-                <div id="grid"></div>
-                <div class="keys">
-                    <div id="undo" onclick="undoPrediction()">Undo</div>
-                    <div id="q" class="key">
-                        <img id="arrowLeft" src="Arrow_Left.png" alt="arrowLeft">
-                    </div>
-                    <div id="z" class="key">
-                        <img id="arrowUp" src="Arrow_Icon.png" alt="arrowUp">
-                    </div>
-                    <div id="d" class="key">
-                        <img id="arrowRight" src="Arrow_Right.png" alt="arrowRight">
-                    </div>
-                    <div id="clear" onclick="clearPrediction()">Clear</div>
-                </div>
-            </div>
-            <div class="arrowNText">
-                <p>Robot direction</p>
-                <img id="arrow" src="Arrow_Icon.png" alt="arrow">
-            </div>
-        </div>
+		<div class="gridNArrow">
+			<div class="gridNKeys">
+				<div id="grid"></div>
+				<div class="keys">
+					<div id="undo" onclick="undoPrediction()">Undo</div>
+					<div id="q" class="key">
+						<img id="arrowLeft" src="Arrow_Left.png" alt="arrowLeft" />
+					</div>
+					<div id="z" class="key">
+						<img id="arrowUp" src="Arrow_Icon.png" alt="arrowUp" />
+					</div>
+					<div id="d" class="key">
+						<img id="arrowRight" src="Arrow_Right.png" alt="arrowRight" />
+					</div>
+					<div id="clear" onclick="clearPrediction()">Clear</div>
+				</div>
+			</div>
+			<div class="arrowNText">
+				<p>Robot direction</p>
+				<img id="arrow" src="Arrow_Icon.png" alt="arrow" />
+			</div>
+		</div>
 	</body>
 </html>

@@ -6,6 +6,11 @@ let start = document.getElementById("start");
 let arrowLeft = document.getElementById("q");
 let arrowRight = document.getElementById("z");
 let arrowUp = document.getElementById("d");
+let spinner = document.getElementById("spinner");
+
+// Cache le spinner
+spinner.style.display = "none";
+
 arrows = [arrowLeft, arrowRight, arrowUp];
 for (let arrow of arrows) {
     arrow.addEventListener("mousedown", () => {
@@ -29,7 +34,6 @@ function clearPrediction() {
 }
 
 
-
 function addArrowInPrediction(arrow) {
     // Ajoute l'ID de la flèche à la liste des prédictions
     if (arrow.id == "q") {
@@ -50,10 +54,18 @@ generateButton.addEventListener("click", () => {
         alert("Please enter a number between 3 and 40.");
         return;
     }
-    generateGrid(selectorSize.value);
+    // Affiche le spinner
+    spinner.style.display = "flex";
+    setTimeout(() => {
+        generateGrid(selectorSize.value);
+        // Cache le spinner
+    spinner.style.display = "none";
+    }, 2000);
 });
 
 function generateGrid(size) {
+    // Ferme la liste des prédictions et affiche le spinner
+    closePrediction();
     // Vide la grille pour éviter les bugs
     grid.innerHTML = "";
     let starts = [];
@@ -119,6 +131,8 @@ function generateGrid(size) {
     robot.ariaColIndex = start.ariaColIndex;
     robot.textContent = "🤖";
     start.appendChild(robot);
+    // Vide les prédictions et les affiche
+    clearPrediction();
     openPrediction();
 }
 
