@@ -1,6 +1,4 @@
 let grid = document.querySelector("#grid");
-let selectorSize = document.getElementById("selectorSize");
-let generateButton = document.getElementById("generate");
 let listPrediction = document.getElementById("listPrediction");
 let start = document.getElementById("start");
 let arrowDirection = document.getElementById("arrow");
@@ -12,6 +10,8 @@ let keys = document.getElementById("keys");
 let arrowDiv = document.getElementById("arrowDiv");
 let text = document.getElementById("text");
 let historyText = document.getElementById("history");
+let game = document.getElementById("game");
+let level = document.getElementById("level");
 
 // Cache le spinner, les flèches directionnelles
 spinner.style.display = "none";
@@ -91,42 +91,6 @@ function addArrowInPrediction(arrowId) {
     }
 
 }
-
-generateButton.addEventListener("click", () => {
-    text.textContent = "";
-    // Vérifie que la taille de la grille est bien comprise entre 3 et 40
-    if (selectorSize.value < 3 || selectorSize.value > 40) {
-        text.textContent = "La taille de la grille doit être comprise entre 3 et 40";
-        return;
-    }
-    // Vide la grille pour éviter les bugs
-    grid.innerHTML = "";
-    // Affiche le spinner
-    spinner.style.display = "flex";
-    // Ferme la liste des prédictions
-    closePrediction();
-    // Cache la flèche de direction du robot
-    hideArrowDirection();
-    // Cache les touches directionnelles
-    hideKeys();
-
-    setTimeout(() => {
-        generateGrid(selectorSize.value);
-        while (!verifyMazeCanBeFinished()) {
-            grid.innerHTML = "";
-            generateGrid(selectorSize.value);
-        }
-        // Cache le spinner
-        spinner.style.display = "none";
-        // Affiche les touches directionnelles
-        showKeys();
-        // Affiche la flèche de direction du robot
-        showArrowDirection();
-        // Vide les prédictions et les affiche
-        clearPrediction();
-        openPrediction();
-    }, 2000);
-});
 
 function generateGrid(size) {
     let starts = [];
@@ -299,7 +263,7 @@ function verifyMazeCanBeFinished() {
             noUp = true;
         }
         // Si la case du bas est le bord ou un mur ou a déjà été visitée, le robot ne peut pas aller en bas
-        if (row >= (+selectorSize.value - 1)) {
+        if (row >= (+selectorSize - 1)) {
             noDown = true;
         } else if (wallsCoordonates.some(arr => arr[0] === (row + 1) && arr[1] === col)) {
             noDown = true;
@@ -319,7 +283,7 @@ function verifyMazeCanBeFinished() {
             noLeft = true;
         }
         // Si la case de droite est le bord ou un mur ou a déjà été visitée, le robot ne peut pas aller à droite
-        if (col >= (+selectorSize.value - 1)) {
+        if (col >= (+selectorSize - 1)) {
             noRight = true;
         } else if (wallsCoordonates.some(arr => arr[0] === row && arr[1] === (col + 1))) {
             noRight = true;
@@ -404,7 +368,7 @@ function startRobotMouvements() {
                     return;
                 }
             } else if (robotDirection == "down") {
-                if (robotRow < (+selectorSize.value - 1) && !wallsCoordonates.some(arr => arr[0] === (robotRow + 1) && arr[1] === robotCol)) {
+                if (robotRow < (+selectorSize - 1) && !wallsCoordonates.some(arr => arr[0] === (robotRow + 1) && arr[1] === robotCol)) {
                     robotRow++;
                 } else {
                     text.textContent = "Le robot ne peut pas aller en bas";
@@ -422,7 +386,7 @@ function startRobotMouvements() {
                     return;
                 }
             } else if (robotDirection == "right") {
-                if (robotCol < (+selectorSize.value - 1) && !wallsCoordonates.some(arr => arr[0] === robotRow && arr[1] === (robotCol + 1))) {
+                if (robotCol < (+selectorSize - 1) && !wallsCoordonates.some(arr => arr[0] === robotRow && arr[1] === (robotCol + 1))) {
                     robotCol++;
                 } else {
                     text.textContent = "Le robot ne peut pas aller à droite";
@@ -459,6 +423,7 @@ function startRobotMouvements() {
         // Si le robot est sur la case d'arrivée, le jeu est gagné
         if (robotRow == endRow && robotCol == endCol) {
             text.textContent = "Bravo, vous avez gagné !";
+            startGame(+selectorSize + 1);
             return;
         }
     }
@@ -531,5 +496,60 @@ function turnRight(direction) {
     } else if (direction == "up") {
         arrowDirection.style.transform = "rotate(0deg)";
         return "right";
+    }
+}
+
+game.addEventListener("click", () => {
+    startGame();
+});
+
+
+function startGame(taille = 3) {
+    game.style.display = "none";
+    // Si le niveau est inférieur à 37, le jeu continue
+    if (taille-2 < 39) {
+        // Affiche le niveau actuel
+        level.textContent = `Niveau ${taille-2}`;
+        // la taille du labyrinthe
+        selectorSize = taille;
+        // Vide le texte
+        text.textContent = "";
+        // Vide la grille pour éviter les bugs
+        grid.innerHTML = "";
+        // Affiche le spinner
+        spinner.style.display = "flex";
+        // Vide et ferme la liste des prédictions
+        clearPrediction();
+        closePrediction();
+        // Cache la flèche de direction du robot
+        hideArrowDirection();
+        // Cache les touches directionnelles
+        hideKeys();
+    
+        setTimeout(() => {
+            generateGrid(selectorSize);
+            while (!verifyMazeCanBeFinished()) {
+                grid.innerHTML = "";
+                generateGrid(selectorSize);
+            }
+            // Cache le spinner
+            spinner.style.display = "none";
+            // Affiche les touches directionnelles
+            showKeys();
+            // Affiche la flèche de direction du robot
+            showArrowDirection();
+            // Affiche les prédictions
+            openPrediction();
+        }, 2000);
+    } else {
+        // Si le niveau est supérieur à 37, le jeu est gagné
+        text.textContent = "Bravo, vous avez gagné le jeu !";
+        game.style.display = "block";
+        // Cache tout le reste
+        spinner.style.display = "none";
+        hideArrowDirection();
+        hideKeys();
+        closePrediction();
+        grid.innerHTML = "";
     }
 }
