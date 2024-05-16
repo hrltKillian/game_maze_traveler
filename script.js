@@ -12,6 +12,7 @@ let text = document.getElementById("text");
 let historyText = document.getElementById("history");
 let game = document.getElementById("game");
 let level = document.getElementById("level");
+let total = document.getElementById("total");
 
 // Cache le spinner, les flèches directionnelles
 spinner.style.display = "none";
@@ -23,6 +24,7 @@ historyText.style.display = "none";
 let RobotStartDirection = "";
 let rotation = "";
 let startRobotDirection = "";
+let totalScore = 0;
 
 // Vérifie si une touche est appuyée
 document.addEventListener("keydown", (e) => {
@@ -344,10 +346,17 @@ function startRobotMovements() {
 
     function moveRobot(index) {
         if (index >= predictions.length) {
+            // Vide la liste des prédictions
+            clearPrediction();
             return;
         }
+        // Met à jour le score
+        updateScore(1);
 
         let prediction = predictions[index];
+        // Change la couleur des bordures de la prédiction en cours
+        let currentPrediction = listPrediction.children[index];
+        currentPrediction.style.border = "2px solid orange";
         if (prediction === "q") {
             robotDirection = turnLeft(robotDirection);
         } else if (prediction === "z") {
@@ -475,9 +484,9 @@ game.addEventListener("click", () => {
 function startGame(taille = 3) {
     game.style.display = "none";
     // Si le niveau est inférieur à 37, le jeu continue
-    if (taille-2 < 39) {
+    if (taille - 2 < 39) {
         // Affiche le niveau actuel
-        level.textContent = `Niveau ${taille-2}`;
+        level.textContent = `Niveau ${taille - 2}`;
         // la taille du labyrinthe
         selectorSize = taille;
         // Vide le texte
@@ -493,7 +502,7 @@ function startGame(taille = 3) {
         hideArrowDirection();
         // Cache les touches directionnelles
         hideKeys();
-    
+
         setTimeout(() => {
             generateGrid(selectorSize);
             while (!verifyMazeCanBeFinished()) {
@@ -520,4 +529,11 @@ function startGame(taille = 3) {
         closePrediction();
         grid.innerHTML = "";
     }
+}
+
+function updateScore(score) {
+    totalScore += score;
+    // Vide le texte du score
+    total.textContent = "";
+    total.textContent = `Total : ${totalScore}`;
 }
